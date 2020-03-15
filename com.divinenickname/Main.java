@@ -3,8 +3,6 @@ import doctype.DOCXType;
 import doctype.PDFType;
 import doctype.TXTType;
 
-import java.util.ArrayList;
-
 public class Main {
     public static void main(String[] args) {
         DOCXType doc = new DOCXType("test1");
@@ -18,9 +16,35 @@ public class Main {
 
         try {
             Thread.sleep(21000);
-            for (int i = 0; i < dispatcher.getPrintedList().size(); i++) {
+            /*for (int i = 0; i < dispatcher.getPrintedList().size(); i++) {
                 System.out.println(dispatcher.getPrintedList().get(i).toString());
-            }
+            }*/
+
+            //Default sorting
+            System.out.println("default");
+            dispatcher.getPrintedList();
+            System.out.println();
+
+            //Type sorting
+            System.out.println("type");
+            dispatcher.getPrintedList("type");
+            System.out.println();
+
+            //Print time sorting
+            System.out.println("time");
+            dispatcher.getPrintedList("time");
+            System.out.println();
+
+            //Paper size sorting
+            System.out.println("size");
+            dispatcher.getPrintedList("size");
+            System.out.println();
+
+            //Name sorting
+            System.out.println("name");
+            dispatcher.getPrintedList("name");
+            System.out.println();
+
             dispatcher.add(new PDFType("MyPDF"));
         } catch (InterruptedException e) {
             e.printStackTrace();
