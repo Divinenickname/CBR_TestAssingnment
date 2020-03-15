@@ -21,7 +21,20 @@ public interface IDispatcher {
      */
     public void cancelLastDocPrint();
 
-    public List<AbstractFileType> getPrintedList();
+    /**
+     * Default sorted collection
+     */
+    public void getPrintedList();
 
+    /**
+     *
+     * @param arg see in implementation
+     */
+    public void getPrintedList(String arg);
+
+    /**
+     *
+     * @return average printing time in seconds
+     */
     public int getAverageTime();
 }
