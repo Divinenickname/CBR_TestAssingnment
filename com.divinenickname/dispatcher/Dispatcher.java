@@ -94,7 +94,6 @@ public class Dispatcher implements IDispatcher{
                     return;
                 }
                 else {
-                    // TODO вернуть 1000мс
                     try {
                         Thread.sleep(1000);
                         System.out.println(currentPrintDoc.getPrintTime()-i);
