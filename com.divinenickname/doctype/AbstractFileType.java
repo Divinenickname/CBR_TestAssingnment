@@ -4,24 +4,24 @@ public abstract class AbstractFileType {
     private String data;
     private String name;
     private int printTime;
-    private int letterHeight;
-    private int letterWidth;
+    private int paperHeight;
+    private int paperWidth;
     private String type;
 
-    public AbstractFileType(String name, int printTime, int letterHeight, int letterWidth, String type) {
+    public AbstractFileType(String name, int printTime, int paperHeight, int paperWidth, String type) {
         this.name = name;
         this.printTime = printTime;
-        this.letterHeight = letterHeight;
-        this.letterWidth = letterWidth;
+        this.paperHeight = paperHeight;
+        this.paperWidth = paperWidth;
         this.type = type;
     }
 
-    public int getLetterHeight() {
-        return letterHeight;
+    public int getPaperHeight() {
+        return paperHeight;
     }
 
-    public int getLetterWidth() {
-        return letterWidth;
+    public int getPaperWidth() {
+        return paperWidth;
     }
 
     public String getType() {
@@ -66,7 +66,7 @@ public abstract class AbstractFileType {
         type = formatter(type, 4);
         String time = formatter(String.valueOf(printTime), 3);
         name = formatter(name, 15);
-        return type + delim + time + delim + letterHeight + "x" + letterWidth + delim + name;
+        return type + delim + time + delim + paperHeight + "x" + paperWidth + delim + name;
     }
 
     /**
