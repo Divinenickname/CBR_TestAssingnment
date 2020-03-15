@@ -9,7 +9,7 @@ public interface IDispatcher {
      * Stop printing
      * @return list of unprinted documents
      */
-    public List<AbstractFileType> stopPrint();
+    public void stopPrint();
 
     /**
      * Add file to print queue
@@ -22,4 +22,6 @@ public interface IDispatcher {
     public void cancelLastDocPrint();
 
     public List<AbstractFileType> getPrintedList();
+
+    public int getAverageTime();
 }
