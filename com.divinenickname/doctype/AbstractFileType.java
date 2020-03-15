@@ -16,6 +16,10 @@ public abstract class AbstractFileType {
         this.type = type;
     }
 
+    public String getType() {
+        return type;
+    }
+
     public String getData() {
         return data;
     }
@@ -55,5 +59,13 @@ public abstract class AbstractFileType {
         String time = formatter(String.valueOf(printTime), 3);
         name = formatter(name, 15);
         return type + delim + time + delim + letterHeight + "x" + letterWidth + delim + name;
+    }
+
+    /**
+     * Only for easy println information
+     * @return name with extension
+     */
+    public String getFullName(){
+        return this.name+'.'+ this.getType();
     }
 }
