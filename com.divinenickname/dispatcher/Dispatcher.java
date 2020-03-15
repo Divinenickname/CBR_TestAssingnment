@@ -1,5 +1,9 @@
 package dispatcher;
 
+import dispatcher.comparator.NameComparator;
+import dispatcher.comparator.PaperSizeComparator;
+import dispatcher.comparator.PrintTimeComparator;
+import dispatcher.comparator.TypeComparator;
 import doctype.AbstractFileType;
 
 import java.util.*;
@@ -75,14 +79,36 @@ public class Dispatcher implements IDispatcher{
     }
 
     @Override
-    public List<AbstractFileType> getPrintedList() {
-        return printedList;
+    public void getPrintedList() {
+        for (AbstractFileType abstractFileType : printedList) {
+            System.out.println(abstractFileType.toString());
+        }
     }
 
     @Override
     public int getAverageTime() {
         if(totalPrintTime==0 || totalPrintedDocs==0) return 0;
         return totalPrintTime/totalPrintedDocs;
+    }
+
+    @Override
+    public void getPrintedList(String arg) {
+        if(arg.equals(Filters.time.name())){
+            Collections.sort(printedList, new PrintTimeComparator());
+        }
+        else if(arg.equals(Filters.size.name())){
+            Collections.sort(printedList, new PaperSizeComparator());
+        }
+        else if(arg.equals(Filters.type.name())){
+            Collections.sort(printedList, new TypeComparator());
+        }
+        else if(arg.equals(Filters.name.name())){
+            Collections.sort(printedList, new NameComparator());
+        }
+
+        for (AbstractFileType abstractFileType : printedList) {
+            System.out.println(abstractFileType.toString());
+        }
     }
 
     private void print() {
@@ -114,5 +140,15 @@ public class Dispatcher implements IDispatcher{
             System.out.println("Printing is finished\n");
         }
 
+    }
+
+    /**
+     * Filter list
+     */
+    private enum Filters {
+        type,
+        name,
+        size,
+        time
     }
 }
