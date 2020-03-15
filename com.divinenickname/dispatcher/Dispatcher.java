@@ -4,15 +4,19 @@ import doctype.AbstractFileType;
 
 import java.util.*;
 
-public class Dispatcher implements IDispatcher, Runnable{
+public class Dispatcher implements IDispatcher{
     /**
      * How many docs have been printed
      */
-    private int printCount;
+    private int totalPrintedDocs;
 
-    private int totalPrintingTime;
+    private int totalPrintTime;
 
     private boolean isAlive = false;
+    private boolean stopped = false;
+    private AbstractFileType currentPrintDoc;
+
+    Thread t;
 
     /**
      * Queue for storing printing queue
@@ -26,33 +30,38 @@ public class Dispatcher implements IDispatcher, Runnable{
 
 
     @Override
-    public List<AbstractFileType> stopPrint() {
-        Thread.currentThread().interrupt();
-        return new ArrayList<AbstractFileType>(printQueue);
+    public void stopPrint() {
+        t.interrupt();
+        stopped = true;
+        System.out.println("Printing cancelled \nUnprinted files: ");
+        System.out.println(currentPrintDoc.getName() + "." + currentPrintDoc.getType());
+        for (AbstractFileType abstractFileType : printQueue) {
+            System.out.println(abstractFileType.getName() + "." + abstractFileType.getType());
+        }
+        System.out.println();
     }
 
     @Override
     public void add(AbstractFileType file) {
         printQueue.addLast(file);
-        System.out.println("Document added");
+        System.out.println("Document " + file.getFullName() + " added\n");
 
-        if(!isAlive){
-            new Thread(new Runnable() {
+        if(!isAlive & !stopped){
+            t = new Thread(new Runnable() {
                 @Override
                 public void run() {
                     isAlive = true;
-                    while (printQueue.size()!=0){
-                        try {
-                            print();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                    while (printQueue.size()!=0 && !stopped){
+                        print();
                     }
                     isAlive = false;
                 }
-            }).start();
+            });
+            t.start();
+
+            //Small delay for fix unexpected NPE
             try {
-                Thread.sleep(5);
+                Thread.sleep(1);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -62,7 +71,7 @@ public class Dispatcher implements IDispatcher, Runnable{
     @Override
     public void cancelLastDocPrint() {
         printQueue.pollLast();
-        System.out.println("Document removed");
+        System.out.println("Document removed\n");
     }
 
     @Override
@@ -70,38 +79,40 @@ public class Dispatcher implements IDispatcher, Runnable{
         return printedList;
     }
 
-    /**
-     * Wait new doc for adding to {@link #printQueue}
-     */
     @Override
-    public void run() {
-        System.out.println("servStart");
-
-        while (Thread.currentThread().isInterrupted()){
-            try {
-                print();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
+    public int getAverageTime() {
+        if(totalPrintTime==0 || totalPrintedDocs==0) return 0;
+        return totalPrintTime/totalPrintedDocs;
     }
 
-    private void print() throws InterruptedException {
-        AbstractFileType doc = printQueue.poll();
-        if(doc!=null){
-            System.out.println("Printing..." + doc.getName());
-            for (int i = 0; i < doc.getPrintTime(); i++) {
-                // TODO вернуть 1000мс
-                Thread.sleep(150);
-                System.out.println(doc.getPrintTime()-i);
+    private void print() {
+        currentPrintDoc = printQueue.poll();
+        if(currentPrintDoc!=null){
+            System.out.println("Printing... " + currentPrintDoc.getFullName() +"\n");
+            for (int i = 0; i < currentPrintDoc.getPrintTime(); i++) {
+                if(stopped || t.isInterrupted()){
+                    return;
+                }
+                else {
+                    // TODO вернуть 1000мс
+                    try {
+                        Thread.sleep(1000);
+                        System.out.println(currentPrintDoc.getPrintTime()-i);
+                    } catch (InterruptedException e) {
+                        return;
+                        // Теоретически делать так нельзя, это исключение бросается потому что мы прервали поток.
+                        //e.printStackTrace();
+                    }
+
+                }
+
             }
-            printCount++;
-            printedList.add(doc);
-            totalPrintingTime += doc.getPrintTime();
+            totalPrintedDocs++;
+            printedList.add(currentPrintDoc);
+            totalPrintTime += currentPrintDoc.getPrintTime();
         }
         else {
-            System.out.println("Printing is finished");
+            System.out.println("Printing is finished\n");
         }
 
     }
