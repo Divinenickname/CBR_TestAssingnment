@@ -16,6 +16,14 @@ public abstract class AbstractFileType {
         this.type = type;
     }
 
+    public int getLetterHeight() {
+        return letterHeight;
+    }
+
+    public int getLetterWidth() {
+        return letterWidth;
+    }
+
     public String getType() {
         return type;
     }
