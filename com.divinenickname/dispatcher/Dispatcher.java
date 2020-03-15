@@ -20,7 +20,7 @@ public class Dispatcher implements IDispatcher{
     private boolean stopped = false;
     private AbstractFileType currentPrintDoc;
 
-    Thread t;
+    private Thread t;
 
     /**
      * Queue for storing printing queue
